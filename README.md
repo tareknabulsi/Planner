@@ -1,0 +1,2 @@
+# Planner
+Got a lot of practice with table views and persisting data during this project. Data is saved to the phone's storage using Realm, which I found to be much more straight forward than using Core Data. Also got a little more practice with segues. Each cell in the table view in the categories list goes to the same controller, however, the unique category object populates the new controller with data only related to that category. If I could add more customizations and notificatiosn with this app, it could be a good planning app for iOS.
