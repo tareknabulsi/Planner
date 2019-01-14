@@ -8,8 +8,9 @@
 
 import UIKit
 import RealmSwift
+import ChameleonFramework
 
-class PlannerViewController: UITableViewController {
+class PlannerViewController: SwipeTableViewController {
     
     let realm = try! Realm()
     @IBOutlet weak var searchBar: UISearchBar!
@@ -25,20 +26,48 @@ class PlannerViewController: UITableViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        print(FileManager.default.urls(for: .documentDirectory, in: .userDomainMask))
-        //searchBar.delegate = self
+        searchBar.delegate = self
+        tableView.separatorStyle = .none
     }
-
-    //MARK - Tableview Datasoruce Methods
+    
+    override func viewWillAppear(_ animated: Bool) {
+        title = selectedCategory?.name //Nav Bar title gets category name
+        guard let color = selectedCategory?.color else { fatalError() } //Save color of category
+        updateNavBar(withHexCode: color)
+    }
+    
+    override func viewWillDisappear(_ animated: Bool) {
+        updateNavBar(withHexCode: "1D9BF6")
+    }
+    
+//MARK: – Nav Bar Setup Methods
+    
+    //Takes color and sets it as the Nav Bar color
+    func updateNavBar(withHexCode colorHexCode: String){
+        guard let navBar = navigationController?.navigationBar else
+        {fatalError("Navigation controller does not exist.")}
+        guard let navBarColor = UIColor(hexString: colorHexCode) else {fatalError()}
+            navBar.barTintColor    = navBarColor
+            navBar.tintColor       = ContrastColorOf(navBarColor, returnFlat: true)
+            navBar.largeTitleTextAttributes = [NSAttributedString.Key.foregroundColor: ContrastColorOf(navBarColor, returnFlat: true)]
+            searchBar.barTintColor = navBarColor
+    }
+    
+    
+    
+//MARK: - Tableview Datasoruce Methods
     
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return items?.count ?? 1
     }
 
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "TodoItemCell", for: indexPath)
-        
+        let cell = super.tableView(tableView, cellForRowAt: indexPath)
         cell.textLabel?.text = items?[indexPath.row].title ?? "No Items Added Yet"
+        if let color = UIColor(hexString: selectedCategory!.color)?.darken(byPercentage: CGFloat(indexPath.row) / CGFloat(items!.count)) {
+            cell.backgroundColor = color
+            cell.textLabel?.textColor = ContrastColorOf(color, returnFlat: true)
+        }
         
         //If done, set to checkmark, else set to none
         cell.accessoryType = items?[indexPath.row].done == true ?  .checkmark : .none
@@ -46,7 +75,10 @@ class PlannerViewController: UITableViewController {
         return cell
     }
     
-    //MARK - Tableview Delegate Methods
+    
+    
+    
+//MARK: - Tableview Delegate Methods
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         print(indexPath.row)
@@ -65,7 +97,10 @@ class PlannerViewController: UITableViewController {
         tableView.deselectRow(at: indexPath, animated: true)
     }
     
-    //MARK - Add New Items
+    
+    
+    
+//MARK: - Add New Items
     
     @IBAction func addButtonPressed(_ sender: UIBarButtonItem) {
         var textField = UITextField()
@@ -79,6 +114,7 @@ class PlannerViewController: UITableViewController {
                         let newItem = Item()
                         newItem.title = textField.text!
                         newItem.dateCreated = Date()
+                        newItem.color = UIColor.randomFlat.hexValue()
                         currentCategory.items.append(newItem)
                     }
                 } catch {
@@ -110,25 +146,42 @@ class PlannerViewController: UITableViewController {
     }
 
     func loadItems() {
-        items = selectedCategory?.items.sorted(byKeyPath: "title", ascending: true)
+        items = selectedCategory?.items.sorted(byKeyPath: "dateCreated", ascending: true)
         tableView.reloadData()
     }
-}
-
-//MARK - Search bar methods
-extension PlannerViewController: UISearchBarDelegate {
-    func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
-        items = items?.filter("title CONTAINS[cd] %@", searchBar.text!).sorted(byKeyPath: "dateCreated", ascending: true)
-        tableView.reloadData()
-    }
-
-    //Show all of the items if the search text is empty
-    func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
-        if searchBar.text?.count == 0 {
-            loadItems()
-            DispatchQueue.main.async { //Code gets run in the foreground
-                searchBar.resignFirstResponder()
+    
+    
+    
+    
+//MARK: – Delete Data From Swipe
+    override func updateModel(at indexPath: IndexPath) {
+        super.updateModel(at: indexPath)
+        
+        if let itemsForDeletion = items?[indexPath.row] {
+            do {
+                try self.realm.write {
+                    self.realm.delete(itemsForDeletion)
+                }
+            } catch {
+                print("Error deleting category, \(error)")
             }
+        }
+    }
+    
+    override func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
+        loadItems() //Refill the items array so we can sort through them again.
+        items = items?.filter("title CONTAINS[cd] %@", searchBar.text!).sorted(byKeyPath: "dateCreated", ascending: true)
+        super.searchBarSearchButtonClicked(searchBar)
+    }
+    
+    override func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
+        if searchBar.text?.count == 0 { //If text field is empty, load all the items.
+            loadItems()
+//            DispatchQueue.main.async { //Code gets run in the foreground
+//                searchBar.resignFirstResponder()
+//            }
+        } else { //Otherwise reload the table view.
+            super.searchBar(searchBar, textDidChange: searchText)
         }
     }
 }

@@ -19,6 +19,7 @@
 		DE50BE6B21DFEE3500C125A0 /* PlannerUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = DE50BE6A21DFEE3500C125A0 /* PlannerUITests.swift */; };
 		DEE60BA921E962FD00819211 /* Item.swift in Sources */ = {isa = PBXBuildFile; fileRef = DEE60BA821E962FD00819211 /* Item.swift */; };
 		DEE60BAB21E9630400819211 /* Category.swift in Sources */ = {isa = PBXBuildFile; fileRef = DEE60BAA21E9630400819211 /* Category.swift */; };
+		DEE60BAD21EA54B800819211 /* SwipeTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DEE60BAC21EA54B800819211 /* SwipeTableViewController.swift */; };
 		F94764FD8B5BAF7607254BC5 /* Pods_PlannerTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BB98986F4BB60471FCC92CA8 /* Pods_PlannerTests.framework */; };
 /* End PBXBuildFile section */
 
@@ -64,6 +65,7 @@
 		DE50BE6C21DFEE3500C125A0 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		DEE60BA821E962FD00819211 /* Item.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Item.swift; sourceTree = "<group>"; };
 		DEE60BAA21E9630400819211 /* Category.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Category.swift; sourceTree = "<group>"; };
+		DEE60BAC21EA54B800819211 /* SwipeTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwipeTableViewController.swift; sourceTree = "<group>"; };
 		E718BA511B6B35A60ADBC083 /* Pods-PlannerTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-PlannerTests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-PlannerTests/Pods-PlannerTests.debug.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -185,6 +187,7 @@
 			children = (
 				DE4D2AF221E83870006443FA /* CategoryViewController.swift */,
 				DE50BE4C21DFEE3500C125A0 /* PlannerViewController.swift */,
+				DEE60BAC21EA54B800819211 /* SwipeTableViewController.swift */,
 			);
 			path = Controllers;
 			sourceTree = "<group>";
@@ -346,15 +349,19 @@
 			);
 			inputPaths = (
 				"${SRCROOT}/Pods/Target Support Files/Pods-Planner/Pods-Planner-frameworks.sh",
+				"${BUILT_PRODUCTS_DIR}/ChameleonFramework/ChameleonFramework.framework",
 				"${BUILT_PRODUCTS_DIR}/Realm/Realm.framework",
 				"${BUILT_PRODUCTS_DIR}/RealmSwift/RealmSwift.framework",
+				"${BUILT_PRODUCTS_DIR}/SwipeCellKit/SwipeCellKit.framework",
 			);
 			name = "[CP] Embed Pods Frameworks";
 			outputFileListPaths = (
 			);
 			outputPaths = (
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/ChameleonFramework.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Realm.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/RealmSwift.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/SwipeCellKit.framework",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -438,6 +445,7 @@
 				DE4D2AF321E83870006443FA /* CategoryViewController.swift in Sources */,
 				DE50BE4D21DFEE3500C125A0 /* PlannerViewController.swift in Sources */,
 				DE50BE4B21DFEE3500C125A0 /* AppDelegate.swift in Sources */,
+				DEE60BAD21EA54B800819211 /* SwipeTableViewController.swift in Sources */,
 				DEE60BAB21E9630400819211 /* Category.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
